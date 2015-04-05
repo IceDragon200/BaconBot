@@ -1,2 +1,5 @@
-*.yaml
+.bundle
+vendor
 cfg/*
+store/*.yml
+store/*.yaml
