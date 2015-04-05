@@ -1,20 +1,5 @@
 require 'steam-condenser'
 
-def load_steam
-  unless File.exists?("steam.yaml")
-    File.open("steam.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("steam.yaml"))
-end
-
-def save_steam
-  File.open("steam.yaml", "w"){|f|f.write(YAML::dump($steam))}
-end
-
-$steam = load_steam
-$steam ||= {}
-save_steam
-
 plugin :Steam do
   def cmds
     "steam"
@@ -22,44 +7,49 @@ plugin :Steam do
 
   def initialize *args
     super
-    if(File.exists?("cfg/steamapikey"))
+    @steam = bbot.storage.get('steam') { {} }
+    @steam.save
+    @enabled = false
+    if File.exists?("cfg/steamapikey")
       WebApi.api_key = IO.read("cfg/steamapikey").strip
+      @enabled = true
     end
   end
 
   def timer_15s
-    info = get_info $steam.keys
+    return unless @enabled
+    info = get_info @steam.data.keys
 
     info.each do |info|
       id = info[:id]
-      old = $steam[id][:game]
-      $steam[id] = info
-      new = $steam[id][:game]
-      if(new && new != old)
-        $bot.channels[0].msg("steamwatch: #{info[:name]} is now playing #{info[:game]}")
+      old = @steam[id][:game]
+      @steam[id] = info
+      new_game = @steam[id][:game]
+      if new_game && new_game != old
+        bbot.cinch.channels[0].msg("steamwatch: #{info[:name]} is now playing #{info[:game]}")
       end
     end
 
-    save_steam
+    @steam.save
   end
 
   match /steamadd\s+(.+)/, method: :on_steamadd
   def on_steamadd m, name
     id = resolve_vanity_url name
-    unless(id)
+    unless id
       m.reply "failed to resolve vanity url #{name}"
       return
     end
 
-    if($steam.has_key?(id))
+    if @steam.data.key?(id)
       m.reply "#{name} is already on steamwatch"
       return
     end
 
-    $steam[id] = {}
+    @steam[id] = {}
     m.reply "#{name} has been placed on steamwatch"
 
-    save_steam
+    @steam.save
   end
 
   match /steamdel\s+(.+)/, method: :on_steamdel
@@ -69,19 +59,19 @@ plugin :Steam do
       m.reply "failed to resolve vanity url #{name}"
     end
 
-    unless($steam.has_key?(id))
+    unless @steam.data.key?(id)
       m.reply "#{name} is not on steamwatch"
       return
     end
 
-    $steam.delete id
+    @steam.delete id
     m.reply "#{name} has been removed from steamwatch"
   end
 
   match /steam\s*$/, method: :on_steamlist
   def on_steamlist m
     stats = []
-    $steam.each_value do |info|
+    @steam.each_value do |info|
       str = "#{info[:name]}: "
       if(info[:game])
         str += "playing #{info[:game]}"
