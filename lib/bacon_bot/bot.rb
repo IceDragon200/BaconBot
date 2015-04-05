@@ -1,6 +1,7 @@
 require 'cinch'
 require 'ostruct'
 require 'bacon_bot/plugins'
+require 'bacon_bot/storage'
 
 module TeamBacon
   class Bot
@@ -10,11 +11,15 @@ module TeamBacon
     # @!attribute [rw] cinch
     #   @return [Cinch::Bot]
     attr_accessor :cinch
+    # @!attribute [rw] storage
+    #   @return [TeamBacon::Storage]
+    attr_accessor :storage
 
     def initialize(rootpath, config)
       @config = OpenStruct.new(config)
       @rootpath = rootpath
       @plugins = Plugins.new self, @rootpath
+      @storage = Storage.new
       create_bot
       load_plugins
     end
