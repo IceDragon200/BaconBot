@@ -1,10 +1,6 @@
-
-require 'cinch'
 require 'weather-underground'
 
-class Timea
-  include Cinch::Plugin
-
+plugin :Timea do
   def cmds
     "time"
   end
@@ -21,6 +17,3 @@ class Timea
     m.reply obv.display_location[0].full + ": " + obv.local_time
   end
 end
-
-$bot.plugins.register_plugin(Timea)
-

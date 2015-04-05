@@ -1,7 +1,6 @@
-
-CHIPS = ["W"] * 50 + ["R"] * 25 + ["B"] * 10
-
 class Pot
+  CHIPS = ["W"] * 50 + ["R"] * 25 + ["B"] * 10
+
   def initialize
     reset
   end
@@ -110,5 +109,4 @@ class Pot
 
     pretty_chips(chips)
   end
-
 end

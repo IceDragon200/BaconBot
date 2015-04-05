@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'yaml'
 
 def load_insults
@@ -22,9 +20,7 @@ $insult_times.default_proc = proc do |h,k|
   h[k] = 0
 end
 
-class Insult
-  include Cinch::Plugin
-
+plugin :Insult do
   def cmds
     "insult"
   end
@@ -71,6 +67,3 @@ class Insult
     end
   end
 end
-
-$bot.plugins.register_plugin(Insult)
-

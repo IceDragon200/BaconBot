@@ -1,10 +1,6 @@
+require 'bacon_bot/dicebox'
 
-require 'cinch'
-load 'dicebox.rb'
-
-class Dice
-  include Cinch::Plugin
-
+plugin :Dice do
   listen_to :message, method: :on_message
   def on_message m
     return unless m.message =~ /^(\d*#)?(\d+)d(\d+)/
@@ -22,6 +18,3 @@ class Dice
     end
   end
 end
-
-$bot.plugins.register_plugin(Dice)
-

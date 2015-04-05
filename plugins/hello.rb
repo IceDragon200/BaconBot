@@ -1,11 +1,5 @@
-
-require 'cinch'
-
-class Hello
-  include Cinch::Plugin
-
+plugin :Hello do
   match "hello"
-
   def execute(m)
     m.reply "Go die in a fire, #{m.user.nick}"
   end
@@ -15,6 +9,3 @@ class Hello
     m.channel.action "does a jig"
   end
 end
-
-$bot.plugins.register_plugin(Hello)
-

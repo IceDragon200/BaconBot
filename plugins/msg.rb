@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'yaml'
 
 def load_msgs
@@ -17,9 +15,7 @@ $msgs = load_msgs
 $msgs ||= {}
 save_msgs
 
-class Msg
-  include Cinch::Plugin
-
+plugin :Msg do
   def cmds
     "msg"
   end
@@ -66,6 +62,3 @@ class Msg
     end
   end
 end
-
-$bot.plugins.register_plugin(Msg)
-

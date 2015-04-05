@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'yaml'
 
 def load_reminds
@@ -17,9 +15,7 @@ $reminds = load_reminds
 $reminds ||= {}
 save_reminds
 
-class Remind
-  include Cinch::Plugin
-
+plugin :Remind do
   def cmds
     "remind"
   end

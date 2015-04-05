@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
@@ -24,9 +22,7 @@ $fact = load_fact
 $fact ||= [cur_date, ""]
 save_fact
 
-class Wiki
-  include Cinch::Plugin
-
+plugin :Wiki do
   def cmds
     ["wiki", "fact"]
   end
@@ -69,6 +65,3 @@ class Wiki
     text
   end
 end
-
-$bot.plugins.register_plugin(Wiki)
-

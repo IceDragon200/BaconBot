@@ -1,9 +1,4 @@
-
-require 'cinch'
-
-class SG
-  include Cinch::Plugin
-
+plugin :SG do
   def cmds
     "sg"
   end
@@ -142,6 +137,3 @@ class SG
     end
   end
 end
-
-$bot.plugins.register_plugin(SG)
-

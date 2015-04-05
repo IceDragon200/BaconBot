@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'yaml'
 
 def load_seen
@@ -17,9 +15,7 @@ $seen = load_seen
 $seen ||= {}
 save_seen
 
-class Seen
-  include Cinch::Plugin
-
+plugin :Seen do
   def cmds
     "seen"
   end
@@ -50,7 +46,7 @@ class Seen
     days = (hours / 24).to_i
     hours = (hours % 24).to_i
 
-    ago = 
+    ago =
     if(days > 0)
       "#{days}d #{hours}h #{mins}m"
     elsif(hours > 0)
@@ -67,6 +63,3 @@ class Seen
     end
   end
 end
-
-$bot.plugins.register_plugin(Seen)
-

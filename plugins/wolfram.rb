@@ -1,12 +1,8 @@
-
-require 'cinch'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
 
-class Wolfram
-  include Cinch::Plugin
-
+plugin :Wolfram do
   def cmds
     "wolf(ram)"
   end
@@ -15,7 +11,7 @@ class Wolfram
   def execute m, q
     q = URI.escape(q, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     url = "http://api.wolframalpha.com/v2/query?input=#{q}&format=plaintext&appid=HGAQ54-AEUEQH34WV"
-    
+
     doc = Nokogiri::HTML(open(url))
 
     txt = doc.css('#Result plaintext').inner_html
@@ -31,6 +27,3 @@ class Wolfram
     m.reply m.user.nick + ", " + txt
   end
 end
-
-$bot.plugins.register_plugin(Wolfram)
-

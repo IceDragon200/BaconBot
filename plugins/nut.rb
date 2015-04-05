@@ -1,12 +1,8 @@
-
-require 'cinch'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
 
-class Nutrition
-  include Cinch::Plugin
-
+plugin :Nutrition do
   def cmds
     "nut(rition)"
   end
@@ -15,7 +11,7 @@ class Nutrition
   def execute m, q
     q = URI.escape(q, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     url = "http://api.wolframalpha.com/v2/query?input=nutrition%20data%20#{q}&format=plaintext&appid=HGAQ54-AEUEQH34WV"
-    
+
     doc = Nokogiri::HTML(open(url))
 
     txt = doc.css("pod[@id='NutritionLabelSingle:ExpandedFoodData'] plaintext").inner_html
@@ -26,6 +22,3 @@ class Nutrition
     m.reply "#{m.user.nick}, serving: #{serving}, carbs: #{carbs}, fiber: #{fiber}"
   end
 end
-
-$bot.plugins.register_plugin(Nutrition)
-

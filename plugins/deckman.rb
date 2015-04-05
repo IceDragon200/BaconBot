@@ -1,7 +1,5 @@
-
-require 'cinch'
 require 'yaml'
-load 'deck.rb'
+require 'bacon_bot/deck'
 
 def load_decks
   unless File.exists?("decks.yaml")
@@ -24,9 +22,7 @@ $decks.each_value do |deck|
   deck.fix
 end
 
-class DeckMan
-  include Cinch::Plugin
-
+plugin :DeckMan do
   def cmds
     "deck"
   end
@@ -95,6 +91,3 @@ class DeckMan
     end
   end
 end
-
-$bot.plugins.register_plugin(DeckMan)
-

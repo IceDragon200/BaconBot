@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'steam-condenser'
 
 def load_steam
@@ -17,9 +15,7 @@ $steam = load_steam
 $steam ||= {}
 save_steam
 
-class Steam
-  include Cinch::Plugin
-
+plugin :Steam do
   def cmds
     "steam"
   end
@@ -162,6 +158,3 @@ class Steam
     result[:steamid].to_i
   end
 end
-
-$bot.plugins.register_plugin(Steam)
-

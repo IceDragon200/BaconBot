@@ -1,9 +1,4 @@
-
-require 'cinch'
-
-class Help
-  include Cinch::Plugin
-
+plugin :Help do
   def cmds
     "help"
   end
@@ -24,6 +19,3 @@ class Help
     m.reply "I'm helping with #{cmd}!"
   end
 end
-
-$bot.plugins.register_plugin(Help)
-

@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'wordnik'
 require 'json'
 
@@ -7,16 +5,15 @@ Wordnik.configure do |config|
   config.api_key = '3bf46a5a5cb84b9e5a5000c516f0a45d421e6ba5180ed8e72'
 end
 
-class Define
-  include Cinch::Plugin
+plugin :Define do
   #help "!dict(ionary) <word> - Look up a word via the WordNet database"
-  
+
   @@pagesize = 4
 
   def cmds
     ["def(ine)", "ex(ample)", "word"]
   end
-  
+
   match /(?:(?:dict(?:ionary)?)|(?:def(?:ine)?)) ([^\d]*[^\s\d])(?:\s+(\d+))?/, method: :define
   def define(m, query, page = 1)
     page = page.to_i
@@ -65,6 +62,3 @@ class Define
     end
   end
 end
-
-$bot.plugins.register_plugin(Define)
-

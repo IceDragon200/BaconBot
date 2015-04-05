@@ -1,10 +1,6 @@
-
-require 'cinch'
 require 'weather-underground'
 
-class Weather
-  include Cinch::Plugin
-
+plugin :Weather do
   def cmds
     "weather"
   end
@@ -20,6 +16,3 @@ class Weather
     obv.display_location[0].full + ": " + obv.temperature_string + " " + obv.weather
   end
 end
-
-$bot.plugins.register_plugin(Weather)
-

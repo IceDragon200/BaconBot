@@ -1,17 +1,16 @@
-
-require 'cinch'
 require 'redis'
 
 $redis ||= Redis.new
 $murm_users ||= []
 
-class Mumble
-  include Cinch::Plugin
-
+plugin :Mumble do
   def initialize *args
     super
-    
-    @t=Thread.new do
+    start_watch
+  end
+
+  def start_watch
+    @t = Thread.new do
       watch_murmur
     end
   end
@@ -61,6 +60,3 @@ class Mumble
     end
   end
 end
-
-$bot.plugins.register_plugin(Mumble)
-

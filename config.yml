@@ -1,0 +1,6 @@
+---
+nick: 'BaconBot'
+server: 'chat.freenode.net'
+channels:
+- '#bottest'
+password: 'Bacon Is Awesome, actually replace this shit.'

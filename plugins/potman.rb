@@ -1,7 +1,5 @@
-
-require 'cinch'
 require 'yaml'
-load 'pot.rb'
+require 'bacon_bot/pot'
 
 def load_pots
   unless File.exists?("pots.yaml")
@@ -23,9 +21,7 @@ $pots.each_value do |pot|
   pot.fix
 end
 
-class PotMan
-  include Cinch::Plugin
-
+plugin :PotMan do
   def cmds
     "pot"
   end
@@ -78,6 +74,3 @@ class PotMan
     end
   end
 end
-
-$bot.plugins.register_plugin(PotMan)
-

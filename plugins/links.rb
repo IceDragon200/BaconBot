@@ -1,5 +1,3 @@
-
-require 'cinch'
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
@@ -20,9 +18,7 @@ $links = load_links
 $links ||= []
 save_links
 
-class Links
-  include Cinch::Plugin
-
+plugin :Links do
   def cmds
     "links"
   end
@@ -111,6 +107,3 @@ class Links
     end
   end
 end
-
-$bot.plugins.register_plugin(Links)
-

@@ -1,12 +1,11 @@
-
-CARDS = ["RJ", "BJ"]
-%w(H D C S).each do |suit|
-  %w(2 3 4 5 6 7 8 9 10 J Q K A).each do |val|
-    CARDS.push "#{val}#{suit}"
-  end
-end
-
 class Deck
+  CARDS = ["RJ", "BJ"]
+  %w(H D C S).each do |suit|
+    %w(2 3 4 5 6 7 8 9 10 J Q K A).each do |val|
+      CARDS.push "#{val}#{suit}"
+    end
+  end
+
   def initialize
     reset
   end
@@ -108,7 +107,7 @@ class Deck
 
       pretty_suit = pretty_suit.join(", ")
 
-      pretty_suit += " of " + 
+      pretty_suit += " of " +
         case suit[0][-1]
         when "S"
           "Spades"

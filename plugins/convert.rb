@@ -1,11 +1,8 @@
-
-require "net/http"
-require "uri"
+require 'net/http'
+require 'uri'
 require 'steam-condenser'
 
-class Convert
-  include Cinch::Plugin
-
+plugin :Convert do
   def cmds
     ["con(vert)"]
   end
@@ -19,6 +16,3 @@ class Convert
     m.reply "#{j}#{u2}"
   end
 end
-
-$bot.plugins.register_plugin(Convert)
-
