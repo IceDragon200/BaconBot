@@ -1,28 +1,16 @@
-require 'yaml'
 require 'bacon_bot/deck'
 
-def load_decks
-  unless File.exists?("decks.yaml")
-    File.open("decks.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("decks.yaml"))
-end
-
-def save_decks
-  File.open("decks.yaml", "w"){|f|f.write(YAML::dump($decks))}
-end
-
-$decks = load_decks
-$decks ||= {}
-$decks.default_proc = proc do |h,k|
-  h[k] = Deck.new
-end
-
-$decks.each_value do |deck|
-  deck.fix
-end
-
 plugin :DeckMan do
+  def init_store(s)
+    @decks = s.get('decks') do
+      hash = {}
+      hash.default_proc = proc { |h, k| h[k] = Deck.new }
+      hash
+    end
+    @decks.data.each_value(&:fix)
+    @decks.save
+  end
+
   def cmds
     "deck"
   end
@@ -34,18 +22,16 @@ plugin :DeckMan do
       m.reply "deck [help / list],  deck <name> [status / reset / kill / hand / shuffle / discard / list],  deck <name> draw <num>,  deck <name> [put / take / discard / sleeve] <card>"
     when "list"
       synchronize(:deck) do
-        m.reply "decks: #{$decks.keys.join(', ')}"
+        m.reply "decks: #{@decks.data.keys.join(', ')}"
       end
     end
-
-    save_decks
   end
 
   match /deck\s+(\w+)\s+(\w+)\s*(\w*)/, method: :deck
   def deck m, name, task, arg
     synchronize(:deck) do
       msgname = m.user.nick.downcase
-      deck = $decks[name]
+      deck = @decks[name]
 
       case task.downcase
       when "reset"
@@ -69,7 +55,7 @@ plugin :DeckMan do
         cards = deck.put(msgname, arg.upcase)
         m.reply "deck #{name} #{msgname} put: #{cards}"
       when "kill"
-        $decks.delete name
+        @decks.data.delete name
         m.reply "deck #{name} killed"
       when "status"
         num, dnum, hands = deck.status
@@ -87,7 +73,7 @@ plugin :DeckMan do
         m.reply "drew #{cards}"
       end
 
-      save_decks
+      @decks.save
     end
   end
 end

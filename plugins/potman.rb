@@ -1,27 +1,16 @@
-require 'yaml'
 require 'bacon_bot/pot'
 
-def load_pots
-  unless File.exists?("pots.yaml")
-    File.open("pots.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("pots.yaml"))
-end
-
-def save_pots
-  File.open("pots.yaml", "w"){|f|f.write(YAML::dump($pots))}
-end
-$pots = load_pots
-$pots ||= {}
-$pots.default_proc = proc do |h,k|
-  h[k] = Pot.new
-end
-
-$pots.each_value do |pot|
-  pot.fix
-end
-
 plugin :PotMan do
+  def init_store(s)
+    @pots = s.get('pots') do
+      h = {}
+      h.default_proc = proc { |h, k| h[k] = Pot.new }
+      h
+    end
+    @pots.data.each_value(&:fix)
+    @pots.save
+  end
+
   def cmds
     "pot"
   end
@@ -33,25 +22,23 @@ plugin :PotMan do
       m.reply "pot [help / list],  pot <name> [status / reset / kill / hand / list],  pot <name> draw <num>,  pot <name> [put / take] <chip>"
     when "list"
       synchronize(:pot) do
-        m.reply "pots: #{$pots.keys.join(', ')}"
+        m.reply "pots: #{@pots.data.keys.join(', ')}"
       end
     end
-
-    save_pots
   end
 
   match /pot\s+(\w+)\s+(\w+)\s*(\w*)/, method: :pot
   def pot m, name, task, arg
     synchronize(:pot) do
       msgname = m.user.nick.downcase
-      pot = $pots[name]
+      pot = @pots[name]
 
       case task.downcase
       when "reset"
         pot.reset
         m.reply "pot #{name} reset"
       when "kill"
-        $pots.delete name
+        @pots.data.delete name
         m.reply "pot #{name} killed"
       when "hand"
         m.reply "pot #{name} #{msgname}'s hand: #{pot.hand(msgname)}"
@@ -70,7 +57,7 @@ plugin :PotMan do
         m.reply "pot #{name} has #{num} chips remaining"
       end
 
-      save_pots
+      @pots.save
     end
   end
 end

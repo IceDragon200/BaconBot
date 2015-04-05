@@ -1,3 +1,3 @@
 
-$bot.loggers.level = :info
+bbot.cinch.loggers.level = :info
 

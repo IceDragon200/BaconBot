@@ -28,9 +28,7 @@ plugin :SG do
       #"q3alive" => ["188.120.238.182", 27960]
     }
 
-    @t||=Thread.new do
-      watch_sg
-    end
+    @t = async(:watch_sg)
   end
 
   def unregister
@@ -59,7 +57,7 @@ plugin :SG do
 
       @sg_servers.each do |name, addr|
         begin
-          str += "#{name} #{sg_info(addr[0], addr[1])[1].length}    "
+          str += "#{name} #{sg_info(addr[0], addr[1])[1].size}    "
         rescue Exception=>e
           str += "#{name} fail    "
         end
@@ -115,7 +113,7 @@ plugin :SG do
 
     sleep 15 #give time to get fully connected
 
-    while true
+    loop do
       alerts.each do |alert|
         @sg_servers.each do |server, addr|
           begin
@@ -123,7 +121,7 @@ plugin :SG do
             if(players.find{|p|p.downcase.include? alert})
               if((Time.now.to_i - last[alert][server]) > (60 * 5))
                 #it has been more than 5 minutes since we last saw this alert on this server
-                chan = $bot.channels.find{|c|c.name == "#sg_usa"}
+                chan = bbot.cinch.channels.find{|c|c.name == "#sg_usa"}
                 chan.msg("#{alert} alert on #{server}") if chan
               end
               last[alert][server] = Time.now.to_i

@@ -1,21 +1,9 @@
-require 'yaml'
-
-def load_reminds
-  unless File.exists?("reminds.yaml")
-    File.open("reminds.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("reminds.yaml"))
-end
-
-def save_reminds
-  File.open("reminds.yaml", "w"){|f|f.write(YAML::dump($reminds))}
-end
-
-$reminds = load_reminds
-$reminds ||= {}
-save_reminds
-
 plugin :Remind do
+  def init_store(s)
+    @reminds = s.get('reminds') { {} }
+    @reminds.save
+  end
+
   def cmds
     "remind"
   end
@@ -25,18 +13,18 @@ plugin :Remind do
     synchronize(:remind) do
       msgname = m.user.nick.downcase
 
-      if($reminds[msgname] && !$reminds[msgname].empty?)
+      if msgs = @reminds[msgname].presence
         to_del = []
-        $reminds[msgname].each do |remind|
-          if(remind[:at] <= Time.now)
+        msgs.each do |remind|
+          if remind[:at] <= Time.now
             m.reply "#{m.user.nick}, #{remind[:name]} at #{remind[:time]}: #{remind[:msg]}"
             to_del.push(remind)
           end
         end
         to_del.each do |remind|
-          $reminds[msgname].delete(remind)
+          msgs.delete(remind)
         end
-        save_reminds
+        @reminds.save
       end
     end
   end
@@ -61,18 +49,14 @@ plugin :Remind do
     end
 
     synchronize(:remind) do
-      $reminds[to] ||= []
-      $reminds[to].push({
-        :msg => reminder,
-        :name => m.user.nick.downcase,
-        :time => Time.now,
-        :at => at
-      })
-      save_reminds
+      (@reminds[to] ||= []).push(
+        msg: reminder,
+        name: m.user.nick.downcase,
+        time: Time.now,
+        at: at
+      )
+      @reminds.save
       m.reply "#{m.user.nick}, #{to} will be remindered"
     end
   end
 end
-
-$bot.plugins.register_plugin(Remind)
-

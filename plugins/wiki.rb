@@ -1,17 +1,15 @@
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
-require 'yaml'
-
-def cur_date
-  Time.now.strftime("%D")
-end
 
 plugin :Wiki do
-  def initialize(*args)
-    super
-    @fact = bbot.storage.get('fact') { [cur_date, ''] }
+  def init_store(s)
+    @fact = s.get('fact') { [cur_date, ''] }
     @fact.save
+  end
+
+  def cur_date
+    Time.now.strftime("%D")
   end
 
   def cmds

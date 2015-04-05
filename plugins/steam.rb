@@ -105,15 +105,17 @@ plugin :Steam do
     if(ids.class == Array)
       ids = ids.join(",")
     end
-    params = { :steamids => ids }
+    params = { steamids: ids }
     json = WebApi.json 'ISteamUser', 'GetPlayerSummaries', 2, params
-    result = MultiJson.load(json, :symbolize_keys => true)[:response]
+    result = MultiJson.load(json, symbolize_keys: true)[:response]
 
     result[:players].map do |p|
-      {:id => p[:steamid].to_i,
-        :name => p[:personaname],
-        :state => get_state(p[:personastate].to_i),
-        :game => p[:gameextrainfo]}
+      {
+        id: p[:steamid].to_i,
+        name: p[:personaname],
+        state: get_state(p[:personastate].to_i),
+        game: p[:gameextrainfo]
+      }
     end
   end
 
@@ -139,9 +141,9 @@ plugin :Steam do
   end
 
   def resolve_vanity_url(vanity_url)
-    params = { :vanityurl => vanity_url }
+    params = { vanityurl: vanity_url }
     json = WebApi.json 'ISteamUser', 'ResolveVanityURL', 1, params
-    result = MultiJson.load(json, :symbolize_keys => true)[:response]
+    result = MultiJson.load(json, symbolize_keys: true)[:response]
 
     return nil if result[:success] != 1
 

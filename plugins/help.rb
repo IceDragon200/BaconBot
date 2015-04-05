@@ -6,8 +6,8 @@ plugin :Help do
   match /(help|cmds|commands)$/, method: :help
   def help m
     cmds = []
-    $bot.plugins.each do |p|
-      if(p.respond_to? :cmds)
+    bbot.cinch.plugins.each do |p|
+      if p.respond_to? :cmds
         cmds += [p.cmds].flatten
       end
     end

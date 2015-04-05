@@ -35,7 +35,7 @@ plugin :Define do
   match /(?:ex(?:ample)?) ([^\s]+)(?:\s+(\d+))?/, method: :example
   def example(m, query, page = 1)
     page = page.to_i
-    dfns = Wordnik.word.get_examples(query, :limit => @@pagesize*4)['examples']
+    dfns = Wordnik.word.get_examples(query, limit: @@pagesize * 4)['examples']
     maxPage = (dfns.size/@@pagesize.to_f).ceil
 
     page = 1 if page < 1

@@ -1,73 +1,50 @@
 require 'nokogiri'
 require 'open-uri'
 require 'uri'
-require 'yaml'
-
-def load_links
-  unless File.exists?("links.yaml")
-    File.open("links.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("links.yaml"))
-end
-
-def save_links
-  File.open("links.yaml", "w"){|f|f.write(YAML::dump($links))}
-end
-
-$links = load_links
-$links ||= []
-save_links
 
 plugin :Links do
+  def init_store(s)
+    @links = s.get('links') { [] }
+    @links.save
+  end
+
   def cmds
-    "links"
+    'links'
+  end
+
+  def save_link(url, text, title, name)
+    synchronize(:links) do
+      @links.data.push(
+        url: url,
+        msg: text,
+        title: title,
+        name: name,
+        time: Time.now
+      )
+      @links.save
+    end
   end
 
   listen_to :message, method: :on_message
   def on_message m
-
+    name = m.user.nick.downcase
     ## get title, save link
     #
-    text = m.message.clone
-    while(match = text.match(/\S+\.\S*[^,!]/))
+    text = m.message.dup
+    while match = text.match(/\S+\.\S*[^,!]/)
       text = match.post_match
-      url = match[0]
-
-      unless url.index("http") == 0
-        url = "http://#{url}"
-      end
-
+      url = URI.parse(match[0])
+      url.scheme = 'http' if url.scheme.blank?
       begin
         doc = Nokogiri::HTML(open(url))
-
         title = doc.css('title').text.gsub("\n", "")
-        synchronize(:links) do
-          $links.push ({
-            :url => url,
-            :msg => text,
-            :title => title,
-            :name => m.user.nick.downcase,
-            :time => Time.now
-          })
-          save_links
-        end
+        save_link url, text, title, name
         m.reply("#{m.user.nick}, link: #{title}") if title && !title.empty?
       rescue URI::InvalidURIError
       rescue SocketError
-      rescue Exception=>e
-        if e.to_s.start_with?("redirection forbidden")
-          synchronize(:links) do
-            $links.push({
-              :url => url,
-              :msg => text,
-              :title => "",
-              :name => m.user.nick.downcase,
-              :time => Time.now
-            })
-            save_links
-          end
-        else
-          #throw e
+      rescue Exception => e
+        if e.to_s.include?('redirection forbidden')
+          save_link(url, text, '', name)
         end
       end
     end
@@ -76,17 +53,17 @@ plugin :Links do
   match /links((?:\s+\w+)*)/
   def execute m, words
     if !words
-      $links.sort! do |a, b|
+      @links.data.sort! do |a, b|
         b[:time] <=> a[:time]
       end
 
-      links = $links[0..2]
+      links = @links[0..2]
       links.each do |link|
         m.reply "#{m.user.nick}, #{link[:url]} - #{link[:title]} - linked by #{link[:name]} at #{link[:time]}"
       end
     else
       words = words.downcase.split
-      results = $links.select do |link|
+      results = @links.data.select do |link|
         words.all? do |word|
           word.strip!
           link[:url].to_s.downcase.include?(word) ||

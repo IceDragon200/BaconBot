@@ -8,7 +8,7 @@ plugin :Dice do
     dice = Dicebox::Dice.new(m.message)
     begin
       d = dice.roll
-      if (d.length < 350)
+      if d.size < 350
         m.reply "#{m.user.nick}, #{d}"
       else
         m.reply "#{m.user.nick}, I don't have enough dice to roll that!"

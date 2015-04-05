@@ -1,31 +1,18 @@
-require 'yaml'
-
-def load_msgs
-  unless File.exists?("msgs.yaml")
-    File.open("msgs.yaml", 'w'){|f| f.write("---")}
-  end
-  YAML::load(File.read("msgs.yaml"))
-end
-
-def save_msgs
-  File.open("msgs.yaml", "w"){|f|f.write(YAML::dump($msgs))}
-end
-
-$msgs = load_msgs
-$msgs ||= {}
-save_msgs
-
 plugin :Msg do
+  def init_store(s)
+    @msgs = s.get('msgs') { {} }
+    @msgs.save
+  end
+
   def cmds
-    "msg"
+    'msg'
   end
 
   listen_to :join, method: :on_join
   def on_join m
     synchronize(:msg) do
       msgname = m.user.nick.downcase
-
-      if($msgs[msgname] && $msgs[msgname].length > 0)
+      if @msgs[msgname].presence
         m.reply "#{m.user.nick}, you have messages waiting"
       end
     end
@@ -36,12 +23,12 @@ plugin :Msg do
     synchronize(:msg) do
       msgname = m.user.nick.downcase
 
-      if($msgs[msgname] && $msgs[msgname].length > 0)
-        $msgs[msgname].each do |msg|
+      if umsgs = @msgs[msgname].presence
+        umsgs.each do |msg|
           m.reply "#{m.user.nick}, #{msg[:name]} at #{msg[:time]}: #{msg[:msg]}"
         end
-        $msgs[msgname] = []
-        save_msgs
+        umsgs.clear
+        @msgs.save
       end
     end
   end
@@ -49,15 +36,12 @@ plugin :Msg do
   match /msg\s+([^\s]+)\s+([^\s].*)/, method: :msg
   def msg m, to, text
     synchronize(:msg) do
-      to.downcase!
-
-      $msgs[to] ||= []
-      $msgs[to].push({
-        :msg => text,
-        :name => m.user.nick,
-        :time => Time.now
-      })
-      save_msgs
+      (@msgs[to.downcase] ||= []).push(
+        msg: text,
+        name: m.user.nick,
+        time: Time.now
+      )
+      @msgs.save
       m.reply "#{m.user.nick}, msg deployed"
     end
   end
