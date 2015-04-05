@@ -1,5 +1,6 @@
 require 'cinch/plugin'
 require 'set'
+require 'bacon_bot/http'
 
 module TeamBacon
   class Plugins
@@ -74,6 +75,10 @@ module TeamBacon
       else
         Thread.new(&method(method_name))
       end
+    end
+
+    def http
+      @http ||= TeamBacon::HttpHelper.new
     end
 
     def self.create(_name, &block)
