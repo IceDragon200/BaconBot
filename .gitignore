@@ -3,3 +3,4 @@ vendor
 cfg/*
 store/*.yml
 store/*.yaml
+Gemfile.lock
