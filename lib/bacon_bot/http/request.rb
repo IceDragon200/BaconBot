@@ -31,7 +31,7 @@ module Bacon
     end
 
     def json(uri, options = {})
-      h = { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+      h = { headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' } }
       request(uri, h.deep_merge(options)) { |res| Yajl::Parser.parse(res.body) }
     end
 
