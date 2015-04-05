@@ -34,7 +34,10 @@ module Bacon
     #   @return [String]
     attr_accessor :rootpath
 
+    attr_accessor :logger
+
     def initialize(rootpath)
+      @logger = nil
       @rootpath = rootpath
       @cache = {}
       FileUtils.mkdir_p @rootpath
@@ -61,7 +64,7 @@ module Bacon
     def load(name)
       filename = name_to_file(name)
       unless File.exists?(filename)
-        puts "Preparing to Cache: #{filename}"
+        @logger.debug "Preparing to Cache: #{filename}" if @logger
         if block_given?
           dump name, yield
         else
