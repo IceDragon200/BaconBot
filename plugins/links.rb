@@ -1,5 +1,3 @@
-require 'nokogiri'
-require 'open-uri'
 require 'uri'
 
 plugin :Links do
@@ -36,7 +34,7 @@ plugin :Links do
       url = URI.parse(match[0])
       url.scheme = 'http' if url.scheme.blank?
       begin
-        doc = Nokogiri::HTML(open(url))
+        doc = http.html(url)
         title = doc.css('title').text.gsub("\n", "")
         save_link url, text, title, name
         m.reply("#{m.user.nick}, link: #{title}") if title && !title.empty?
@@ -45,6 +43,9 @@ plugin :Links do
       rescue Exception => e
         if e.to_s.include?('redirection forbidden')
           save_link(url, text, '', name)
+        else
+          puts e.inspect
+          puts e.backtrace.join("\n")
         end
       end
     end

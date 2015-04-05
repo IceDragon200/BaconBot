@@ -1,5 +1,4 @@
 require 'wordnik'
-require 'json'
 
 Wordnik.configure do |config|
   config.api_key = '3bf46a5a5cb84b9e5a5000c516f0a45d421e6ba5180ed8e72'
