@@ -1,6 +1,9 @@
 ---
-nick: 'BaconBot'
+nick: 'BaconBotTesting'
 server: 'chat.freenode.net'
+#server: 'irc.freenode.net'
+commandchar: '@'
 channels:
-- '#bottest'
-password: 'Bacon Is Awesome, actually replace this shit.'
+- '#bottest-bacon'
+#- '#sg_usa'
+password: 'PASSWORD'
