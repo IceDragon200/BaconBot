@@ -1,5 +1,6 @@
 BaconBot
 ========
+[![Build Status](https://travis-ci.org/IceDragon200/BaconBot.svg?branch=master)](https://travis-ci.org/IceDragon200/BaconBot)
 
 ## LOLOLOL
 
