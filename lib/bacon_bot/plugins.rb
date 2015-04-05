@@ -11,9 +11,12 @@ module Bacon
     #   @return [String]
     attr_accessor :rootpath
 
+    attr_accessor :logger
+
     def initialize(bot, rootpath)
       @bot = bot
       @rootpath = rootpath
+      @logger = nil
     end
 
     def list
@@ -34,8 +37,8 @@ module Bacon
     end
 
     def load_all
-      puts "Loading plugins from: #@rootpath"
-      Dir[File.join(@rootpath, 'plugins/*.rb')].each do |f|
+      @logger.puts "Loading plugins from: #@rootpath" if @logger
+      Dir.glob File.join(@rootpath, 'plugins/*.rb') do |f|
         load_plugin f
       end
     end
@@ -117,7 +120,7 @@ module Bacon
     end
 
     def load_file(filename)
-      puts "Loading Plugin: #{filename}"
+      @bbot.plugins.logger.debug "Loading Plugin: #{filename}" if @bbot.plugins.logger
       instance_eval File.read(filename), filename, 1
     end
 
