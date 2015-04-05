@@ -1,4 +1,4 @@
-module TeamBacon
+module Bacon
   class DataCache
     # @!attribute [rw] rootpath
     #   @return [String]

@@ -1,3 +1,5 @@
+require 'bacon_bot/core_ext/array'
+
 module Dicebox # dice functions by JD. http://d20.jonnydigital.com/
   class Dice
     def initialize(line)

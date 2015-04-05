@@ -1,7 +1,7 @@
 require 'yaml'
 require 'fileutils'
 
-module TeamBacon
+module Bacon
   class Storage
     class Store
       attr_accessor :name

@@ -1,3 +1,5 @@
+require 'bacon_bot/core_ext/array'
+
 class Pot
   CHIPS = ['W'] * 50 + ['R'] * 25 + ['B'] * 10
 

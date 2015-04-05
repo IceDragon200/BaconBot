@@ -1,3 +1,5 @@
+require 'bacon_bot/core_ext/array'
+
 class Deck
   CARDS = ['RJ', 'BJ']
   %w(H D C S).each do |suit|

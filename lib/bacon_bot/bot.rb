@@ -4,11 +4,11 @@ require 'bacon_bot/plugins'
 require 'bacon_bot/storage'
 require 'bacon_bot/data_cache'
 
-module TeamBacon
+module Bacon
   class Bot
     class << self
       # @!attribute [rw] current
-      #   @return [TeamBacon::Bot]
+      #   @return [Bacon::Bot]
       attr_accessor :current
     end
 
@@ -19,13 +19,13 @@ module TeamBacon
     #   @return [Cinch::Bot]
     attr_accessor :cinch
     # @!attribute [rw] plugins
-    #   @return [TeamBacon::Plugins]
+    #   @return [Bacon::Plugins]
     attr_accessor :plugins
     # @!attribute [rw] storage
-    #   @return [TeamBacon::Storage]
+    #   @return [Bacon::Storage]
     attr_accessor :storage
     # @!attribute [rw] data_cache
-    #   @return [TeamBacon::DataCache]
+    #   @return [Bacon::DataCache]
     attr_accessor :data_cache
 
     def initialize(rootpath, config)

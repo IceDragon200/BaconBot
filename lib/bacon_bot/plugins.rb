@@ -2,10 +2,10 @@ require 'cinch/plugin'
 require 'set'
 require 'bacon_bot/http'
 
-module TeamBacon
+module Bacon
   class Plugins
     # @!attribute [rw] bot
-    #   @return [TeamBacon::Bot]
+    #   @return [Bacon::Bot]
     attr_accessor :bot
     # @!attribute [rw] rootpath
     #   @return [String]
@@ -66,7 +66,7 @@ module TeamBacon
     end
 
     def bbot
-      TeamBacon::Bot.current
+      Bacon::Bot.current
     end
 
     def async(method_name = nil, &block)
@@ -78,7 +78,7 @@ module TeamBacon
     end
 
     def http
-      @http ||= TeamBacon::HttpHelper.new
+      @http ||= Bacon::HTTPRequestHelper.new
     end
 
     def self.create(_name, &block)
@@ -105,7 +105,7 @@ module TeamBacon
 
   class Plugins::Loader
     # @!attribute [rw] bbot
-    #   @return [TeamBacon::Bot]
+    #   @return [Bacon::Bot]
     attr_accessor :bbot
 
     def initialize(bot)
