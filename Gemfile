@@ -1,9 +1,12 @@
 source 'https://rubygems.org'
 
+gemspec
+
+gem 'activesupport'
 gem 'cinch'
-gem 'steam-condenser'
-gem 'wordnik'
 gem 'nokogiri'
-gem 'open-uri'
 gem 'redis'
+gem 'steam-condenser'
 gem 'weather-underground'
+gem 'wordnik'
+gem 'yajl-ruby'
