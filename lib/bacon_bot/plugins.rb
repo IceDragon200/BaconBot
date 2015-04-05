@@ -33,6 +33,7 @@ module TeamBacon
     end
 
     def load_all
+      puts "Loading plugins from: #@rootpath"
       Dir[File.join(@rootpath, 'plugins/*.rb')].each do |f|
         load_plugin f
       end
@@ -59,12 +60,37 @@ module TeamBacon
   end
 
   class Plugin
-    include Cinch::Plugin
+    def init_store(s)
+      #
+    end
 
-    def self.create(name, &block)
+    def bbot
+      TeamBacon::Bot.current
+    end
+
+    def async(method_name = nil, &block)
+      if block_given?
+        Thread.new(&block)
+      else
+        Thread.new(&method(method_name))
+      end
+    end
+
+    def self.create(_name, &block)
       Class.new self do |mod|
+        include Cinch::Plugin
+
         def mod.name
-          name
+          _name
+        end
+
+        def mod.to_s
+          _name
+        end
+
+        def initialize(*args)
+          super
+          init_store bbot.storage
         end
 
         class_eval &block
@@ -73,22 +99,25 @@ module TeamBacon
   end
 
   class Plugins::Loader
-    attr_accessor :bot
+    # @!attribute [rw] bbot
+    #   @return [TeamBacon::Bot]
+    attr_accessor :bbot
 
     def initialize(bot)
-      @bot = bot
+      @bbot = bot
     end
 
     def plugin(name, &block)
-      @bot.plugins.register Plugin.create(name, &block)
+      @bbot.plugins.register Plugin.create(name, &block)
     end
 
     def load_file(filename)
+      puts "Loading Plugin: #{filename}"
       instance_eval File.read(filename), filename, 1
     end
 
-    def load_file(bot, filename)
-      new(bot).load_file(filename)
+    def self.load_file(bbot, filename)
+      new(bbot).load_file(filename)
     end
   end
 end

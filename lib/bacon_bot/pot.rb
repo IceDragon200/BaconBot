@@ -1,5 +1,5 @@
 class Pot
-  CHIPS = ["W"] * 50 + ["R"] * 25 + ["B"] * 10
+  CHIPS = ['W'] * 50 + ['R'] * 25 + ['B'] * 10
 
   def initialize
     reset
@@ -28,11 +28,11 @@ class Pot
 
     chips.each do |chip|
       case chip
-      when "B"
+      when 'B'
         blues.push chip
-      when "R"
+      when 'R'
         reds.push chip
-      when "W"
+      when 'W'
         whites.push chip
       end
     end
@@ -70,7 +70,7 @@ class Pot
     drawn = []
     num.times do
       next if @chips.empty?
-      drawn.push(@chips.delete_at(rand(@chips.length)))
+      drawn.push @chips.pick!
     end
     @hands[player] += drawn
     pretty_chips(drawn)

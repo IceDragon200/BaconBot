@@ -1,4 +1,5 @@
 require 'yaml'
+require 'fileutils'
 
 module TeamBacon
   class Storage
@@ -29,12 +30,14 @@ module TeamBacon
       end
     end
 
+    # @!attribute [rw] rootpath
+    #   @return [String]
     attr_accessor :rootpath
-    attr_accessor :cache
 
-    def initialize
-      @rootpath = Dir.getwd
+    def initialize(rootpath)
+      @rootpath = rootpath
       @cache = {}
+      FileUtils.mkdir_p @rootpath
     end
 
     def clear
@@ -58,10 +61,11 @@ module TeamBacon
     def load(name)
       filename = name_to_file(name)
       unless File.exists?(filename)
+        puts "Preparing to Cache: #{filename}"
         if block_given?
-          dump filename, yield
+          dump name, yield
         else
-          dump filename, {}
+          dump name, {}
         end
       end
       YAML.load_file filename

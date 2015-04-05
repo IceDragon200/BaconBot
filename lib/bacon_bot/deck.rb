@@ -1,5 +1,5 @@
 class Deck
-  CARDS = ["RJ", "BJ"]
+  CARDS = ['RJ', 'BJ']
   %w(H D C S).each do |suit|
     %w(2 3 4 5 6 7 8 9 10 J Q K A).each do |val|
       CARDS.push "#{val}#{suit}"
@@ -155,7 +155,7 @@ class Deck
   end
 
   def status
-    stat = [@cards.length, @discard.length]
+    stat = [@cards.size, @discard.size]
     hands = []
     @hands.each do |player, hand|
       unless hand.empty? && !@sleeves[player]
@@ -266,7 +266,7 @@ class Deck
     drawn = []
     num.times do
       next if @cards.empty?
-      drawn.push(@cards.delete_at(rand(@cards.length)))
+      drawn.push @cards.pick!
     end
     @hands[player] += drawn
     pretty_cards(drawn)

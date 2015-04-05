@@ -2,6 +2,7 @@ require 'cinch'
 require 'ostruct'
 require 'bacon_bot/plugins'
 require 'bacon_bot/storage'
+require 'bacon_bot/data_cache'
 
 module TeamBacon
   class Bot
@@ -23,35 +24,40 @@ module TeamBacon
     # @!attribute [rw] storage
     #   @return [TeamBacon::Storage]
     attr_accessor :storage
+    # @!attribute [rw] data_cache
+    #   @return [TeamBacon::DataCache]
+    attr_accessor :data_cache
 
     def initialize(rootpath, config)
       self.class.current = self
-      @config = OpenStruct.new(config)
       @rootpath = rootpath
+      @config = OpenStruct.new config
       @plugins = Plugins.new self, @rootpath
-      @storage = Storage.new
+      @storage = Storage.new File.join(@rootpath, 'store')
+      @data_cache = DataCache.new File.join(@rootpath, 'data')
       create_bot
       load_plugins
     end
 
     def create_bot
+      cc = @config
       @cinch = Cinch::Bot.new do
         configure do |c|
-          c.nick = @config.nick
-          c.realname = @config.realname || @config.nick
-          c.user = @config.user || @config.nick
-          c.server = @config.server
-          c.channels = @config.channels || [@config.channel]
+          c.nick = cc.nick
+          c.realname = cc.realname || cc.nick
+          c.user = cc.user || cc.nick
+          c.server = cc.server || abort('Server missing')
+          c.channels = cc.channels || [cc.channel]
         end
 
         on :connect do |m|
-          if pass = @config.password
-            User("nickserv").msg("identify #{pass}")
+          if pass = cc.password
+            User("nickserv").send("identify #{pass}")
           end
         end
 
-        on :message, "!reload" do |m|
-          if owner = @config.owner
+        on :message, "#{cc.commandchar}reload" do |m|
+          if owner = cc.owner
             load_plugins if m.user.nick.casecmp(owner) == 0
           end
         end
@@ -59,7 +65,7 @@ module TeamBacon
     end
 
     def start_scheduler
-      @scheduler = Cinch::Timer.new self, interval: 15 do
+      @scheduler = Cinch::Timer.new @cinch, interval: 15 do
         on_timer_15s
       end
     end
