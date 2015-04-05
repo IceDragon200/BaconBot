@@ -1,0 +1,7 @@
+language: ruby
+before_install:
+- gem install bundler
+install:
+- bundle install
+script:
+- bundle exec rspec
