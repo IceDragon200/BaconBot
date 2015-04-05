@@ -17,6 +17,9 @@ module TeamBacon
     # @!attribute [rw] cinch
     #   @return [Cinch::Bot]
     attr_accessor :cinch
+    # @!attribute [rw] plugins
+    #   @return [TeamBacon::Plugins]
+    attr_accessor :plugins
     # @!attribute [rw] storage
     #   @return [TeamBacon::Storage]
     attr_accessor :storage
