@@ -4,8 +4,8 @@ require 'yaml'
 require 'optparse'
 
 options = {
-  root: File.dirname(__FILE__),
-  config_file: File.expand_path('../config.yml', File.dirname(__FILE__))
+  root: Dir.getwd,
+  config_file: File.expand_path('config.yml', Dir.getwd)
 }
 
 argv = OptionParser.new do |opts|
@@ -23,6 +23,6 @@ argv = OptionParser.new do |opts|
   end
 end.parse(ARGV)
 
-config = YAML.load_file config_file
+config = YAML.load_file options[:config_file]
 bot = TeamBacon::Bot.new options[:root], config
 bot.start
