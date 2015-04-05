@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary     = 'The mighty BaconBot'
   s.description = 'The mighty BaconBot of TeamBacon'
   s.date        = Time.now.to_date.to_s
-  s.version     = TeamBacon::Version::STRING
+  s.version     = Bacon::Version::STRING
   s.homepage    = 'https://github.com/archSeer/Scarlet/'
   s.license     = 'MIT'
 
