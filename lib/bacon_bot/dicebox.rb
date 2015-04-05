@@ -7,7 +7,7 @@ module Dicebox # dice functions by JD. http://d20.jonnydigital.com/
       @dice_regex = /((\+|-)?(\d+)(d\d+)?)/
     end
 
-    def roll()
+    def roll
       return roll_line(@line)
     end
 
