@@ -5,6 +5,12 @@ require 'bacon_bot/storage'
 
 module TeamBacon
   class Bot
+    class << self
+      # @!attribute [rw] current
+      #   @return [TeamBacon::Bot]
+      attr_accessor :current
+    end
+
     # @!attribute [rw] rootpath
     #   @return [String]
     attr_accessor :rootpath
@@ -16,6 +22,7 @@ module TeamBacon
     attr_accessor :storage
 
     def initialize(rootpath, config)
+      self.class.current = self
       @config = OpenStruct.new(config)
       @rootpath = rootpath
       @plugins = Plugins.new self, @rootpath
