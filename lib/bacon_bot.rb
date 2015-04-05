@@ -1,5 +1,6 @@
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/object'
+require 'bacon_bot/core_ext'
 require 'bacon_bot/bot'
 require 'bacon_bot/deck'
 require 'bacon_bot/dicebox'
