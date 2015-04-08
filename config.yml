@@ -2,7 +2,7 @@
 nick: 'BaconBotTesting'
 server: 'chat.freenode.net'
 #server: 'irc.freenode.net'
-commandchar: '@'
+commandchar: '!'
 channels:
 - '#bottest-bacon'
 #- '#sg_usa'
