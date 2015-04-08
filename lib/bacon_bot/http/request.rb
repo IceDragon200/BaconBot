@@ -6,24 +6,28 @@ require 'yajl'
 module Bacon
   module HTTPHelper
     class Response
-      attr_accessor :org
+      attr_accessor :res
       attr_accessor :data
+      attr_accessor :err
 
-      def initialize(org, data)
-        @org = org
+      def initialize(res, data)
+        @res = res
         @data = data
+        @err = nil
       end
     end
 
     def request(uri, options = {})
       res = Excon.new(uri).request({ method: :get }.merge(options))
-      data = begin
-        yield res
+      resp = Response.new res, nil
+      begin
+        resp.data = yield res
       rescue Exception => ex
+        resp.err = ex.dup
         puts ex.inspect
         nil
       end
-      Response.new res, data
+      resp
     end
 
     def plain(uri, options = {})
