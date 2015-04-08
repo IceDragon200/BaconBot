@@ -10,6 +10,7 @@ plugin :Seen do
 
   listen_to :channel, method: :log_message
   def log_message(m)
+    return unless m.user
     @seen[m.user.nick.downcase] = {
       nick: m.user.nick,
       chan: m.channel.to_s,
